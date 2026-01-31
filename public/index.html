@@ -8,53 +8,129 @@
 </head>
 <body>
     <div class="container">
+        <!-- Header with auth -->
         <header>
-            <h1>📋 Task Manager</h1>
-            <p class="subtitle">Keep track of your tasks</p>
+            <div class="header-content">
+                <div class="logo">
+                    <h1>📋 Task Manager</h1>
+                    <p class="subtitle">Stay organized, get things done</p>
+                </div>
+                <div class="header-actions">
+                    <button id="themeToggle" class="btn-icon" title="Toggle theme">🌙</button>
+                    <div id="authSection">
+                        <!-- Auth buttons will be inserted here -->
+                    </div>
+                </div>
+            </div>
         </header>
+
+        <!-- Dashboard Stats -->
+        <div id="dashboard" class="dashboard">
+            <div class="stat-card">
+                <span class="stat-number" id="statTotal">0</span>
+                <span class="stat-label">Total Tasks</span>
+            </div>
+            <div class="stat-card stat-pending">
+                <span class="stat-number" id="statPending">0</span>
+                <span class="stat-label">Pending</span>
+            </div>
+            <div class="stat-card stat-progress">
+                <span class="stat-number" id="statProgress">0</span>
+                <span class="stat-label">In Progress</span>
+            </div>
+            <div class="stat-card stat-completed">
+                <span class="stat-number" id="statCompleted">0</span>
+                <span class="stat-label">Completed</span>
+            </div>
+            <div class="stat-card stat-overdue">
+                <span class="stat-number" id="statOverdue">0</span>
+                <span class="stat-label">Overdue</span>
+            </div>
+            <div class="stat-card stat-rate">
+                <span class="stat-number" id="statRate">0%</span>
+                <span class="stat-label">Completion</span>
+            </div>
+        </div>
 
         <!-- Add Task Form -->
         <div class="card add-task-section">
             <h2>Add New Task</h2>
             <form id="taskForm">
-                <div class="form-group">
-                    <label for="title">Title *</label>
-                    <input type="text" id="title" name="title" placeholder="Enter task title" required maxlength="100">
+                <div class="form-row">
+                    <div class="form-group flex-2">
+                        <label for="title">Title *</label>
+                        <input type="text" id="title" name="title" placeholder="What needs to be done?" required maxlength="100">
+                    </div>
+                    <div class="form-group">
+                        <label for="priority">Priority</label>
+                        <select id="priority" name="priority">
+                            <option value="low">🟢 Low</option>
+                            <option value="medium" selected>🟡 Medium</option>
+                            <option value="high">🔴 High</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="description">Description</label>
-                    <textarea id="description" name="description" placeholder="Enter task description (optional)" rows="3" maxlength="500"></textarea>
+                    <textarea id="description" name="description" placeholder="Add details (optional)" rows="2" maxlength="500"></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="status">Status</label>
-                    <select id="status" name="status">
-                        <option value="pending">Pending</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="completed">Completed</option>
-                    </select>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <select id="status" name="status">
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="dueDate">Due Date</label>
+                        <input type="date" id="dueDate" name="dueDate">
+                    </div>
+                    <div class="form-group flex-end">
+                        <button type="submit" class="btn btn-primary">Add Task</button>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Add Task</button>
             </form>
         </div>
 
-        <!-- Filter Section -->
-        <div class="filter-section">
-            <label for="filterStatus">Filter by status:</label>
-            <select id="filterStatus">
-                <option value="">All Tasks</option>
-                <option value="pending">Pending</option>
-                <option value="in-progress">In Progress</option>
-                <option value="completed">Completed</option>
-            </select>
+        <!-- Filters and Search -->
+        <div class="filters-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search tasks...">
+            </div>
+            <div class="filter-group">
+                <select id="filterStatus">
+                    <option value="all">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="completed">Completed</option>
+                </select>
+                <select id="filterPriority">
+                    <option value="all">All Priority</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+                <select id="sortBy">
+                    <option value="createdAt">Sort: Newest</option>
+                    <option value="dueDate">Sort: Due Date</option>
+                    <option value="priority">Sort: Priority</option>
+                </select>
+            </div>
+            <button id="exportBtn" class="btn btn-secondary" title="Export to CSV">📥 Export</button>
         </div>
 
         <!-- Task List -->
         <div class="task-list-section">
-            <h2>Your Tasks</h2>
+            <div class="section-header">
+                <h2>Your Tasks</h2>
+                <span id="taskCount" class="task-count"></span>
+            </div>
             <div id="taskList" class="task-list">
                 <!-- Tasks will be loaded here -->
             </div>
-            <p id="emptyMessage" class="empty-message" style="display: none;">No tasks found. Add one above!</p>
+            <p id="emptyMessage" class="empty-message" style="display: none;">No tasks found. Create one above!</p>
         </div>
     </div>
 
@@ -73,18 +149,73 @@
                     <label for="editDescription">Description</label>
                     <textarea id="editDescription" rows="3" maxlength="500"></textarea>
                 </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editStatus">Status</label>
+                        <select id="editStatus">
+                            <option value="pending">Pending</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPriority">Priority</label>
+                        <select id="editPriority">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="form-group">
-                    <label for="editStatus">Status</label>
-                    <select id="editStatus">
-                        <option value="pending">Pending</option>
-                        <option value="in-progress">In Progress</option>
-                        <option value="completed">Completed</option>
-                    </select>
+                    <label for="editDueDate">Due Date</label>
+                    <input type="date" id="editDueDate">
                 </div>
                 <div class="modal-buttons">
                     <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
                     <button type="submit" class="btn btn-primary">Save Changes</button>
                 </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal" style="display: none;">
+        <div class="modal-content auth-modal">
+            <span class="close-btn" onclick="closeAuthModal()">&times;</span>
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+                <button class="auth-tab" onclick="switchAuthTab('register')">Register</button>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+            
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form" style="display: none;">
+                <div class="form-group">
+                    <label for="regUsername">Username</label>
+                    <input type="text" id="regUsername" required minlength="3">
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" required minlength="6">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Create Account</button>
             </form>
         </div>
     </div>
